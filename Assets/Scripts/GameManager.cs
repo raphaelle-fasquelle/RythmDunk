@@ -4,16 +4,30 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
     [Header("Canvases")]
     public GameObject inGameCanvas;
     public GameObject winCanvas;
     public GameObject loseCanvas;
     public GameObject menuCanvas;
 
-    private void Start()
+    public bool trackOver;
+
+    private void Awake()
     {
+        if(Instance == null)
+            Instance = this;
     }
 
+    private void Update()
+    {
+        if (Time.time >= MusicInfo.musicDuration)
+            trackOver = true;
+    }
+    /// <summary>
+    /// Manages canvases according to game state
+    /// </summary>
+    /// <param name="state"></param>
     public void ChangeUIState(string state)
     {
         switch (state)

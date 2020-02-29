@@ -10,34 +10,50 @@ public class BallBehavior : MonoBehaviour
     private float verticalForce;
     private Rigidbody rb;
 
+    private bool scored;
 
-    private void Awake()
+    private void OnEnable()
     {
+        scored = false;
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
     }
 
     void Update()
     {
-        if(transform.position.y < -1.8f)
+        if(transform.position.y < -2.5f)
         {
+            if (!scored)
+            {
+                //LOST
+                Debug.Log("lost");
+                if(GameManager.Instance.inGame)
+                    GameManager.Instance.Lost();
+            }
             ResetBall();
         }
     }
 
     public void ThrowBall()
     {
+        rb.isKinematic = false;
         rb.useGravity = true;
-        rb.AddForce(0f, verticalForce, forwardForce, ForceMode.Impulse);
+        rb.drag = 1f;
+        Vector3 addedForce = new Vector3(0f, verticalForce, forwardForce);
+        rb.AddForce(addedForce, ForceMode.Impulse);
     }
 
     private void ResetBall()
     {
         gameObject.SetActive(false);
         rb.useGravity = false;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        transform.position = new Vector3(0f, 0f, 0.2f);
+        rb.isKinematic = true;
+        //transform.position = initPos;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        scored = true;
     }
 
 }

@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     public GameObject menuCanvas;
 
     public bool trackOver;
+    public bool inGame;
+
+    private const string loseState = "Lose", inGameState = "InGame", winState = "Win", menuState = "Menu";
 
     private void Awake()
     {
@@ -19,9 +22,15 @@ public class GameManager : MonoBehaviour
             Instance = this;
     }
 
+    private void Start()
+    {
+        StartMusic();
+        inGame = true;
+    }
+
     private void Update()
     {
-        if (Time.time >= MusicInfo.musicDuration)
+        if (GetComponent<AudioSource>().time >= MusicInfo.musicDuration)
             trackOver = true;
     }
     /// <summary>
@@ -32,16 +41,16 @@ public class GameManager : MonoBehaviour
     {
         switch (state)
         {
-            case "InGame":
+            case inGameState:
                 SetActiveOrInactive(new List<GameObject> { inGameCanvas }, new List<GameObject> { winCanvas, loseCanvas, menuCanvas });
                 break;
-            case "Win":
+            case winState:
                 SetActiveOrInactive(new List<GameObject> { winCanvas }, new List<GameObject> { inGameCanvas, loseCanvas, menuCanvas });
                 break;
-            case "Lose":
+            case loseState:
                 SetActiveOrInactive(new List<GameObject> { loseCanvas }, new List<GameObject> { winCanvas, inGameCanvas, menuCanvas });
                 break;
-            case "Menu":
+            case menuState:
                 SetActiveOrInactive(new List<GameObject> { menuCanvas }, new List<GameObject> { winCanvas, loseCanvas, inGameCanvas });
                 break;
             default:
@@ -55,5 +64,37 @@ public class GameManager : MonoBehaviour
             go.SetActive(true);
         foreach(GameObject go in inactivObjs)
             go.SetActive(false);
+    }
+
+    public void StartMusic()
+    {
+        StartCoroutine(WaitToStartMusic());
+    }
+
+    IEnumerator WaitToStartMusic()
+    {
+        yield return new WaitForSeconds(1.86f);
+        GetComponent<AudioSource>().Play();
+    }
+
+    public void Lost()
+    {
+        GetComponent<AudioSource>().Stop();
+        inGame = false;
+        StartCoroutine(WaitForLastBallsToDespawn());
+    }
+
+    IEnumerator WaitForLastBallsToDespawn()
+    {
+        yield return new WaitForSeconds(2.5f);
+        ChangeUIState(loseState);
+    }
+
+    public void StartTrackGame()
+    {
+        ChangeUIState(inGameState);
+        StartMusic();
+        inGame = true;
+        BallSpawner.Instance.ResetBallSpawner();
     }
 }

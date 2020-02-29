@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (GameManager.Instance.inGame && Input.GetMouseButtonDown(0))
         {
             int width = Screen.width;
             float mousePos = Input.mousePosition.x;

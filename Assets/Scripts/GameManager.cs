@@ -15,15 +15,22 @@ public class GameManager : MonoBehaviour
 
     public Text scoreText;
     public Text finalScoreText;
+    public GameObject bestSore;
     private int score;
+
+    public GameObject player;
+    public ParticleSystem scoreFeedback;
+
+    [Range (0.2f,3f)]
+    public float musicStartDelay;
+
+    public Slider difficultySlider;
 
     public bool trackOver;
     public bool inGame;
     public bool infinteMode;
 
     private bool musicStarted;
-
-    public Text musicTime;
 
     private const string loseState = "Lose", inGameState = "InGame", winState = "Win", menuState = "Menu";
     private AudioSource music;
@@ -94,6 +101,7 @@ public class GameManager : MonoBehaviour
 
     private void InitGame()
     {
+        player.SetActive(true);
         musicStarted = false;
         UpdateScore(false);
         ChangeUIState(inGameState);
@@ -109,7 +117,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator WaitToStartMusic()
     {
-        yield return new WaitForSeconds(1.86f);
+        yield return new WaitForSeconds(musicStartDelay);
         music.Play();
         musicStarted = true;
     }
@@ -119,19 +127,21 @@ public class GameManager : MonoBehaviour
         music.Stop();
         inGame = false;
         StartCoroutine(WaitForLastBallsToDespawn());
-        finalScoreText.text = "Your final score is " + score;
+        finalScoreText.text = "Your final score is " + score +"\n"+(MusicInfo.startTimes.Count-score)+ " to go to win !";
     }
 
     public void Victory()
     {
         inGame = false;
         ChangeUIState(winState);
+        player.SetActive(false);
     }
 
     IEnumerator WaitForLastBallsToDespawn()
     {
         yield return new WaitForSeconds(2.5f);
         ChangeUIState(loseState);
+        player.SetActive(false);
     }
 
     public void UpdateScore(bool plusOne)

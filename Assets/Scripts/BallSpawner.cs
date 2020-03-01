@@ -4,14 +4,31 @@ using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
 {
-    public Queue<GameObject> ballQueue;
+    /// <summary>
+    /// GameObject containing the balls of the object pooler
+    /// </summary>
     public GameObject balls;
+    /// <summary>
+    /// GameObject containing the transforms of the four possible spawn positions
+    /// </summary>
+    public GameObject spawnPositions;
+    /// <summary>
+    /// Object Pooling queue
+    /// </summary>
+    private Queue<GameObject> ballQueue;
+    /// <summary>
+    /// The index in GPGameLevelMakerFile events of the current ball to spawn
+    /// </summary>
     private int currentSpawn;
     public float gameStartTime;
-    public GameObject spawnPositions;
     public GameManager gm;
 
+    private int nbLoop;
 
+
+    /// <summary>
+    /// Initiating the object pooler
+    /// </summary>
     void Start()
     {
         ballQueue = new Queue<GameObject>();
@@ -27,10 +44,20 @@ public class BallSpawner : MonoBehaviour
         {
             currentSpawn++;
             Spawn();
-            if (gm.infinteMode && currentSpawn >= MusicInfo.startTimes.Count)
+            if(gm.difficultySlider.value == 1 && currentSpawn <= MusicInfo.startTimes.Count - 3)
+            {
+                //Spawn one out of three
+                currentSpawn+=2;
+            }else if(gm.difficultySlider.value == 2 && currentSpawn <= MusicInfo.startTimes.Count - 2)
+            {
+                //Spawn one out of two
+                currentSpawn++;
+            }
+            if (gm.infinteMode && Time.time - gameStartTime >= MusicInfo.musicDuration - gm.musicStartDelay)
             {
                 currentSpawn = 0;
                 gameStartTime = Time.time;
+                nbLoop++;
             }
         }
     }
@@ -40,6 +67,9 @@ public class BallSpawner : MonoBehaviour
         gameStartTime = Time.time;
     }
 
+    /// <summary>
+    /// Spawns new ball using object pooling
+    /// </summary>
     public void Spawn()
     {
         GameObject newBall = ballQueue.Dequeue();
@@ -57,6 +87,7 @@ public class BallSpawner : MonoBehaviour
 
     public void ResetBallSpawner()
     {
+        nbLoop = 0;
         currentSpawn = 0;
         InitTime();
     }

@@ -6,6 +6,7 @@ public class BallBehavior : MonoBehaviour
 {
     public GameManager gm;
 
+
     [SerializeField]
     private float forwardForce;
     [SerializeField]
@@ -57,6 +58,7 @@ public class BallBehavior : MonoBehaviour
         {
             scored = true;
             gm.UpdateScore(true);
+            gm.scoreFeedback.Play();
         }
     }
 

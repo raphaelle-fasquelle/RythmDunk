@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class MusicInfo : MonoBehaviour
 {
-    string path, jsonString;
+    string jsonString;
     public static List<float> startTimes;
     public static float musicDuration;
 

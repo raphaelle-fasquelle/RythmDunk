@@ -1,38 +1,50 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
     [Header("Canvases")]
     public GameObject inGameCanvas;
     public GameObject winCanvas;
     public GameObject loseCanvas;
     public GameObject menuCanvas;
 
+    public BallSpawner ballSpawner;
+
+    public Text scoreText;
+    public Text finalScoreText;
+    private int score;
+
     public bool trackOver;
     public bool inGame;
+    public bool infinteMode;
+
+    private bool musicStarted;
+
+    public Text musicTime;
 
     private const string loseState = "Lose", inGameState = "InGame", winState = "Win", menuState = "Menu";
+    private AudioSource music;
 
     private void Awake()
     {
-        if(Instance == null)
-            Instance = this;
+        music = GetComponent<AudioSource>();
     }
 
-    private void Start()
+    private void FixedUpdate()
     {
-        StartMusic();
-        inGame = true;
-    }
-
-    private void Update()
-    {
-        if (GetComponent<AudioSource>().time >= MusicInfo.musicDuration)
+        if (musicStarted && !infinteMode && !music.isPlaying)
+        {
             trackOver = true;
+            if (inGame)
+            {
+                Victory();
+            }
+        }
     }
+
     /// <summary>
     /// Manages canvases according to game state
     /// </summary>
@@ -66,6 +78,30 @@ public class GameManager : MonoBehaviour
             go.SetActive(false);
     }
 
+    public void StartTrackGame()
+    {
+        infinteMode = false;
+        music.loop = false;
+        InitGame();
+    }
+
+    public void StartInfiniteMode()
+    {
+        infinteMode = true;
+        music.loop = true;
+        InitGame();
+    }
+
+    private void InitGame()
+    {
+        musicStarted = false;
+        UpdateScore(false);
+        ChangeUIState(inGameState);
+        StartMusic();
+        inGame = true;
+        ballSpawner.ResetBallSpawner();
+    }
+
     public void StartMusic()
     {
         StartCoroutine(WaitToStartMusic());
@@ -74,14 +110,22 @@ public class GameManager : MonoBehaviour
     IEnumerator WaitToStartMusic()
     {
         yield return new WaitForSeconds(1.86f);
-        GetComponent<AudioSource>().Play();
+        music.Play();
+        musicStarted = true;
     }
 
     public void Lost()
     {
-        GetComponent<AudioSource>().Stop();
+        music.Stop();
         inGame = false;
         StartCoroutine(WaitForLastBallsToDespawn());
+        finalScoreText.text = "Your final score is " + score;
+    }
+
+    public void Victory()
+    {
+        inGame = false;
+        ChangeUIState(winState);
     }
 
     IEnumerator WaitForLastBallsToDespawn()
@@ -90,11 +134,14 @@ public class GameManager : MonoBehaviour
         ChangeUIState(loseState);
     }
 
-    public void StartTrackGame()
+    public void UpdateScore(bool plusOne)
     {
-        ChangeUIState(inGameState);
-        StartMusic();
-        inGame = true;
-        BallSpawner.Instance.ResetBallSpawner();
+        score = plusOne ? score + 1 : 0;
+        scoreText.text = "Score : " + score;
+    }
+
+    public void BackToMenu()
+    {
+        ChangeUIState(menuState);
     }
 }

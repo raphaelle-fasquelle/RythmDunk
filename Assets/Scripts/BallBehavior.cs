@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BallBehavior : MonoBehaviour
 {
+    public GameManager gm;
+
     [SerializeField]
     private float forwardForce;
     [SerializeField]
@@ -25,10 +27,8 @@ public class BallBehavior : MonoBehaviour
         {
             if (!scored)
             {
-                //LOST
-                Debug.Log("lost");
-                if(GameManager.Instance.inGame)
-                    GameManager.Instance.Lost();
+                if (gm.inGame)
+                    gm.Lost();
             }
             ResetBall();
         }
@@ -53,7 +53,11 @@ public class BallBehavior : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        scored = true;
+        if (gm.inGame)
+        {
+            scored = true;
+            gm.UpdateScore(true);
+        }
     }
 
 }

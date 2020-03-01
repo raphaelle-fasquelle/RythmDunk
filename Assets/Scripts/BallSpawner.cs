@@ -4,36 +4,34 @@ using UnityEngine;
 
 public class BallSpawner : MonoBehaviour
 {
-    public static BallSpawner Instance;
     public Queue<GameObject> ballQueue;
     public GameObject balls;
     private int currentSpawn;
-    private float gameStartTime;
+    public float gameStartTime;
     public GameObject spawnPositions;
+    public GameManager gm;
 
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-    }
 
     void Start()
     {
-        currentSpawn = 0;
         ballQueue = new Queue<GameObject>();
         foreach(Transform child in balls.transform)
         {
             ballQueue.Enqueue(child.gameObject);
         }
-        InitTime();
     }
 
     private void Update()
     {
-        if(GameManager.Instance.inGame && !GameManager.Instance.trackOver && Time.time - gameStartTime >= MusicInfo.startTimes[currentSpawn])
+        if (gm.inGame && currentSpawn < MusicInfo.startTimes.Count && Time.time - gameStartTime >= MusicInfo.startTimes[currentSpawn])
         {
             currentSpawn++;
             Spawn();
+            if (gm.infinteMode && currentSpawn >= MusicInfo.startTimes.Count)
+            {
+                currentSpawn = 0;
+                gameStartTime = Time.time;
+            }
         }
     }
 

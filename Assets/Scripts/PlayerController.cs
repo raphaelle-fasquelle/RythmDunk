@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public GameObject zones;
+    public GameManager gm;
 
     private void Start()
     {
@@ -12,7 +13,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.inGame && Input.GetMouseButtonDown(0))
+        if (gm.inGame && Input.GetMouseButtonDown(0))
         {
             int width = Screen.width;
             float mousePos = Input.mousePosition.x;

@@ -12,8 +12,8 @@ public class MusicInfo : MonoBehaviour
 
     private void Start()
     {
-        path = Application.streamingAssetsPath + "/tfr_unity_1m14s_jeu_3.glm.bytes";
-        jsonString = File.ReadAllText(path);
+        TextAsset file = Resources.Load("tfr_unity_1m14s_jeu_3.glm") as TextAsset;
+        jsonString = file.ToString();
         GPGameLevelMakerFile musicEvents = JsonUtility.FromJson<GPGameLevelMakerFile>(jsonString);
         startTimes = new List<float>();
 

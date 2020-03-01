@@ -17,6 +17,7 @@ public class BallBehavior : MonoBehaviour
     private float verticalForce = 10f;
 
     private Rigidbody rb;
+    private TrailRenderer tr;
     /// <summary>
     /// Whether or not the ball went through the hoop before being despawned
     /// </summary>
@@ -27,6 +28,8 @@ public class BallBehavior : MonoBehaviour
         scored = false;
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+        tr = GetComponent<TrailRenderer>();
+
     }
 
     void Update()
@@ -54,6 +57,7 @@ public class BallBehavior : MonoBehaviour
 
     public void ThrowBall()
     {
+        tr.Clear();
         rb.isKinematic = false;
         rb.useGravity = true;
         rb.drag = 1f;

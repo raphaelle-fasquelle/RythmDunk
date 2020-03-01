@@ -142,16 +142,19 @@ public class GameManager : MonoBehaviour
         StartCoroutine(MusicFadeOut(music, 1f));
         StartCoroutine(WaitForLastBallsToDespawn());
         int totalToCatch = MusicInfo.startTimes.Count / (4 - (int)difficultySlider.value);
-        finalScoreText.text = "Your final score is " + score +"\n"+(totalToCatch - score)+ " to go to win !";
         if (infinteMode)
         {
             if (PlayerPrefs.GetInt(bestScorePlayerPref, 0) < score)
                 PlayerPrefs.SetInt(bestScorePlayerPref, score);
             bestSore.SetActive(true);
             bestSore.GetComponent<Text>().text = "Best score : " + PlayerPrefs.GetInt(bestScorePlayerPref,0);
+            finalScoreText.text = "Your final score is " + score;
         }
         else
+        {
+            finalScoreText.text = "Your final score is " + score + "\n" + (totalToCatch - score) + " to go to win !";
             bestSore.SetActive(false);
+        }
     }
 
     public void Victory()

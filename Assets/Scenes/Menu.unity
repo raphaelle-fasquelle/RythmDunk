@@ -303,7 +303,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1941988072}
-        m_MethodName: StartTrackGame
+        m_MethodName: PlayAgain
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6349,7 +6349,7 @@ MonoBehaviour:
   menuCanvas: {fileID: 1306293589}
   scoreText: {fileID: 272769729}
   finalScoreText: {fileID: 1705927859}
-  bestSore: {fileID: 0}
+  bestSore: {fileID: 256092880}
   difficultySlider: {fileID: 564540579}
   musicStartDelay: 1.86
   ballSpawner: {fileID: 1941988076}

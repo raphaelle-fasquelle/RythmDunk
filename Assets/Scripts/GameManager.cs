@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     private const string loseState = "Lose", inGameState = "InGame", winState = "Win", menuState = "Menu";
     private AudioSource music;
+    private string bestScorePlayerPref = "BestScore";
 
     private void Awake()
     {
@@ -90,6 +91,14 @@ public class GameManager : MonoBehaviour
             go.SetActive(false);
     }
 
+    public void PlayAgain()
+    {
+        if (infinteMode)
+            StartInfiniteMode();
+        else
+            StartTrackGame();
+    }
+
     public void StartTrackGame()
     {
         infinteMode = false;
@@ -129,11 +138,20 @@ public class GameManager : MonoBehaviour
 
     public void Lost()
     {
-        StartCoroutine(MusicFadeOut(music, 1f));
         inGame = false;
+        StartCoroutine(MusicFadeOut(music, 1f));
         StartCoroutine(WaitForLastBallsToDespawn());
         int totalToCatch = MusicInfo.startTimes.Count / (4 - (int)difficultySlider.value);
         finalScoreText.text = "Your final score is " + score +"\n"+(totalToCatch - score)+ " to go to win !";
+        if (infinteMode)
+        {
+            if (PlayerPrefs.GetInt(bestScorePlayerPref, 0) < score)
+                PlayerPrefs.SetInt(bestScorePlayerPref, score);
+            bestSore.SetActive(true);
+            bestSore.GetComponent<Text>().text = "Best score : " + PlayerPrefs.GetInt(bestScorePlayerPref,0);
+        }
+        else
+            bestSore.SetActive(false);
     }
 
     public void Victory()

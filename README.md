@@ -31,3 +31,4 @@ Pour cette même raison je n'ai pas mis de collider sur les bords du panier afin
 - Ajouter un leaderboard.
 - Ajouter des skins de cerceaux et de balles.
 - Ajouter la possibilité d'utiliser la musique présente sur le téléphone du joueur.
+- Animations de victoire et de défaite

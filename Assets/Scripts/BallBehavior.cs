@@ -6,13 +6,20 @@ public class BallBehavior : MonoBehaviour
 {
     public GameManager gm;
 
+    /// <summary>
+    /// Ball rotates on itself at rotatingSpeed
+    /// </summary>
+    public float rotatingSpeed;
 
     [SerializeField]
-    private float forwardForce;
+    private float forwardForce = -7.5f;
     [SerializeField]
-    private float verticalForce;
+    private float verticalForce = 10f;
+
     private Rigidbody rb;
-
+    /// <summary>
+    /// Whether or not the ball went through the hoop before being despawned
+    /// </summary>
     private bool scored;
 
     private void OnEnable()
@@ -24,15 +31,25 @@ public class BallBehavior : MonoBehaviour
 
     void Update()
     {
+        //Despawn the ball when it reaches a certain y position
         if(transform.position.y < -2.5f)
         {
             if (!scored)
             {
+                //If the ball didn't go through the hoop, the game is lost
                 if (gm.inGame)
                     gm.Lost();
             }
             ResetBall();
         }
+    }
+
+    /// <summary>
+    /// Rotate the ball around its x axis
+    /// </summary>
+    private void FixedUpdate()
+    {
+        transform.Rotate(rotatingSpeed * Time.fixedDeltaTime, 0, 0);
     }
 
     public void ThrowBall()
@@ -47,11 +64,15 @@ public class BallBehavior : MonoBehaviour
     private void ResetBall()
     {
         gameObject.SetActive(false);
+        transform.eulerAngles = Vector3.zero;
         rb.useGravity = false;
         rb.isKinematic = true;
-        //transform.position = initPos;
     }
 
+    /// <summary>
+    /// Update score if ball went through the hoop
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
         if (gm.inGame)

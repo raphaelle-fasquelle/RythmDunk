@@ -11,25 +11,28 @@ public class GameManager : MonoBehaviour
     public GameObject loseCanvas;
     public GameObject menuCanvas;
 
-    public BallSpawner ballSpawner;
-
+    [Header("UI texts")]
     public Text scoreText;
     public Text finalScoreText;
     public GameObject bestSore;
-    private int score;
+
+    public Slider difficultySlider;
+
+    /// <summary>
+    /// The time that take the balls during spawning and reaching the hoop
+    /// </summary>
+    [Range(0.2f, 3f)]
+    public float musicStartDelay;
+
+    public BallSpawner ballSpawner;
 
     public GameObject player;
     public ParticleSystem scoreFeedback;
 
-    [Range (0.2f,3f)]
-    public float musicStartDelay;
+    private int score;
 
-    public Slider difficultySlider;
-
-    public bool trackOver;
     public bool inGame;
     public bool infinteMode;
-
     private bool musicStarted;
 
     private const string loseState = "Lose", inGameState = "InGame", winState = "Win", menuState = "Menu";
@@ -40,11 +43,13 @@ public class GameManager : MonoBehaviour
         music = GetComponent<AudioSource>();
     }
 
+    /// <summary>
+    /// If the game mode isn't infinite and the music stopped playing, the player has won
+    /// </summary>
     private void FixedUpdate()
     {
         if (musicStarted && !infinteMode && !music.isPlaying)
         {
-            trackOver = true;
             if (inGame)
             {
                 Victory();
@@ -124,10 +129,11 @@ public class GameManager : MonoBehaviour
 
     public void Lost()
     {
-        music.Stop();
+        StartCoroutine(MusicFadeOut(music, 1f));
         inGame = false;
         StartCoroutine(WaitForLastBallsToDespawn());
-        finalScoreText.text = "Your final score is " + score +"\n"+(MusicInfo.startTimes.Count-score)+ " to go to win !";
+        int totalToCatch = MusicInfo.startTimes.Count / (4 - (int)difficultySlider.value);
+        finalScoreText.text = "Your final score is " + score +"\n"+(totalToCatch - score)+ " to go to win !";
     }
 
     public void Victory()
@@ -137,6 +143,10 @@ public class GameManager : MonoBehaviour
         player.SetActive(false);
     }
 
+    /// <summary>
+    /// Displays the defeat canvas after the last ball on the screen despawned
+    /// </summary>
+    /// <returns></returns>
     IEnumerator WaitForLastBallsToDespawn()
     {
         yield return new WaitForSeconds(2.5f);
@@ -153,5 +163,19 @@ public class GameManager : MonoBehaviour
     public void BackToMenu()
     {
         ChangeUIState(menuState);
+    }
+
+    public static IEnumerator MusicFadeOut(AudioSource audioSource, float FadeTime)
+    {
+        float startVolume = audioSource.volume;
+
+        while (audioSource.volume > 0)
+        {
+            audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+            yield return null;
+        }
+
+        audioSource.Stop();
+        audioSource.volume = startVolume;
     }
 }

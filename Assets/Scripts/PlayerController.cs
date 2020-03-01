@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    /// <summary>
+    /// Contains the four transforms of the possible player positions
+    /// </summary>
     public GameObject zones;
     public GameManager gm;
+    /// <summary>
+    /// Contains the three background corresponding to the four possible player and spawn positions
+    /// </summary>
     public GameObject backgroundZones;
+
     private Material backgroundMat1, backgroundMat2, backgroundMat3, backgroundMat4;
     private Color backgroundCol1, backgroundCol2, backgroundCol3, backgroundCol4;
 
@@ -21,7 +28,11 @@ public class PlayerController : MonoBehaviour
         backgroundCol3 = backgroundMat3.color;
         backgroundCol4 = backgroundMat4.color;
     }
-    // Update is called once per frame
+
+    /// <summary>
+    /// Move player to the zone that was touched
+    /// Briefly changes the zone background color to give feedback
+    /// </summary>
     void Update()
     {
         if (gm.inGame && Input.GetMouseButtonDown(0))
@@ -59,6 +70,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Changes the zone background color back to its original color
+    /// </summary>
+    /// <param name="m">The material of the background to change</param>
+    /// <param name="c">The original color of the background</param>
+    /// <returns></returns>
     IEnumerator ChangeColorBack(Material m, Color c)
     {
         yield return new WaitForSeconds(0.2f);

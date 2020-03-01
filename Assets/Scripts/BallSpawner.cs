@@ -23,8 +23,6 @@ public class BallSpawner : MonoBehaviour
     public float gameStartTime;
     public GameManager gm;
 
-    private int nbLoop;
-
 
     /// <summary>
     /// Initiating the object pooler
@@ -40,6 +38,7 @@ public class BallSpawner : MonoBehaviour
 
     private void Update()
     {
+        //Spawn ball according to start time in json
         if (gm.inGame && currentSpawn < MusicInfo.startTimes.Count && Time.time - gameStartTime >= MusicInfo.startTimes[currentSpawn])
         {
             currentSpawn++;
@@ -53,11 +52,11 @@ public class BallSpawner : MonoBehaviour
                 //Spawn one out of two
                 currentSpawn++;
             }
+            //Loop if mode is infinite
             if (gm.infinteMode && Time.time - gameStartTime >= MusicInfo.musicDuration - gm.musicStartDelay)
             {
                 currentSpawn = 0;
                 gameStartTime = Time.time;
-                nbLoop++;
             }
         }
     }
@@ -79,6 +78,10 @@ public class BallSpawner : MonoBehaviour
         ballQueue.Enqueue(newBall);
     }
 
+    /// <summary>
+    /// Set the new ball position to a random zone between the 4 possible zones
+    /// </summary>
+    /// <param name="ball">The ball to position</param>
     public void SetBallStartPos(GameObject ball)
     {
         int rand = Random.Range(0, 4);
@@ -87,7 +90,6 @@ public class BallSpawner : MonoBehaviour
 
     public void ResetBallSpawner()
     {
-        nbLoop = 0;
         currentSpawn = 0;
         InitTime();
     }

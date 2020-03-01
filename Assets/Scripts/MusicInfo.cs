@@ -7,6 +7,9 @@ using UnityEngine;
 public class MusicInfo : MonoBehaviour
 {
     string jsonString;
+    /// <summary>
+    /// List of all the times at which a ball should arrive in the hoop
+    /// </summary>
     public static List<float> startTimes;
     public static float musicDuration;
 
